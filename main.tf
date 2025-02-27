@@ -1,15 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-    }
-  }
-}
-
-provider "google" {
-  region  = var.region
-  zone    = var.zone
-}
 
 resource "google_compute_network" "example_network"{
   name                            = "default"
