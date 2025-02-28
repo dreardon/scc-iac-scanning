@@ -1,4 +1,4 @@
-project_id = 
-zone =
-region = 
-bq_owner = 
+PROJECT_ID = 
+ZONE =
+REGION = 
+BQ_OWNER = 

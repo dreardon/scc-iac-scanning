@@ -1,17 +1,17 @@
-variable "project_id" {
+variable "PROJECT_ID" {
   type = string
 }
 
-variable "zone" {
-  type = string
+variable "ZONE" {
+  type    = string
   default = "us-central1-a"
 }
 
-variable "region" {
-  type = string
+variable "REGION" {
+  type    = string
   default = "us-central1"
 }
 
-variable "bq_owner" {
+variable "BQ_OWNER" {
   type = string
 }

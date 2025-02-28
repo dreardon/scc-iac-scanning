@@ -12,7 +12,12 @@ The primary goal of this repository is to:
 *   **Demonstrate IaC Violations:** Provide concrete examples of common misconfigurations in IaC files (e.g., Terraform, Deployment Manager) that violate security best practices.
 *   **Educate on IaC Security:** Serve as a learning resource for developers and security engineers to understand the types of violations that Google Security Command Center can detect.
 *   **Test IaC Scanning:** Allow users to test and validate their IaC scanning setup with Google Security Command Center by using these samples as test cases.
-* **Improve remediation**: Show specific examples of bad IAC that needs to be fixed.
+*   **Improve remediation**: Show specific examples of bad IAC that needs to be fixed.
+
+## Prerequisites 
+
+* The following Services need to be enabled to submit reports
+     - securityposture.googleapis.com
 
 ## Disclaimer
 
