@@ -1,0 +1,81 @@
+substitutions:
+  _TF_VAR_BQ_OWNER: ${_TF_VAR_BQ_OWNER}
+  _TF_VAR_PROJECT_ID: ${_TF_VAR_PROJECT_ID}
+  _TF_VAR_REGION: ${_TF_VAR_REGION}
+  _TF_VAR_ZONE: ${_TF_VAR_ZONE}
+  _ORGANIZATION_ID: ${_ORGANIZATION_ID}
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  env:
+    - TF_VAR_BQ_OWNER=${_TF_VAR_BQ_OWNER}
+    - TF_VAR_PROJECT_ID=${_TF_VAR_PROJECT_ID}
+    - TF_VAR_REGION=${_TF_VAR_REGION}
+    - TF_VAR_ZONE=${_TF_VAR_ZONE}
+
+artifacts:
+  objects:
+    location: 'gs://scc-iac-example-code-build-artifacts'
+    paths: ['IaCScanReport_$BUILD_ID.sarif.json']
+
+steps:
+  - name: hashicorp/terraform
+    args:
+      - '-c'
+      - |
+        terraform init
+    dir: .
+    id: Terraform Init
+    entrypoint: sh
+
+  - name: hashicorp/terraform
+    args:
+      - '-c'
+      - |
+        terraform plan -out mainplan.tfplan
+    dir: .
+    id: Terraform Plan
+    entrypoint: sh
+
+
+  - name: hashicorp/terraform
+    args:
+      - '-c'
+      - |
+        terraform show -json mainplan.tfplan > mainplan.json
+    dir: .
+    id: Terraform Show
+    entrypoint: sh
+
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        gcloud scc iac-validation-reports create \
+        organizations/$_ORGANIZATION_ID/locations/global --tf-plan-file=mainplan.json \
+        --format="json(response.iacValidationReport)" > IaCScanReport_$BUILD_ID.json
+    dir: .
+    id: Run IaC scan
+    entrypoint: /bin/bash
+
+  - name: golang
+    args:
+      - '-c'
+      - |
+        go run github.com/google/gcp-scc-iac-validation-utils/SARIFConverter@latest \
+          --inputFilePath=IaCScanReport_$BUILD_ID.json \
+          --outputFilePath=IaCScanReport_$BUILD_ID.sarif.json
+    dir: .
+    id: Convert to SARIF format
+    entrypoint: /bin/bash
+
+  - name: golang
+    args:
+      - '-c'
+      - |
+        go run github.com/google/gcp-scc-iac-validation-utils/ReportValidator@latest \
+          --inputFilePath=IaCScanReport_$BUILD_ID.json --failure_expression='High:1,Medium:1,Low:1,Operator:or'
+    dir: .
+    id: Validate results
+    entrypoint: /bin/bash
+    allowFailure: true
