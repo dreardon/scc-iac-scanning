@@ -3,8 +3,7 @@ name: IaC Code Scanning w/ Security Command Center (SCC)
 on:
  push:
     branches:
-      - 'main'
-      - 'release/**/*'
+      - '*'
 
 env:
   WORKLOAD_IDENTITY_POOL: ${{ vars.WORKLOAD_IDENTITY_POOL }}
@@ -63,7 +62,7 @@ jobs:
           failure_criteria: 'High:1,Medium:1,Low:1,Operator:or'
           fail_silently: false
 
-      - name: Scan Results and Summarize Vulnerability Counts
+      - name: Summarize Counts and Output Results
         id: summarize-vulnerabilities
         run: |
           echo 'The result of the terraform code scan was ${{ steps.analyze-code-security-scc.outputs.iac_scan_result }}'
@@ -95,7 +94,8 @@ jobs:
 
           # Output the summary to GITHUB_OUTPUT
           echo "vulnerability_summary=$SUMMARY_STRING" >> $GITHUB_OUTPUT
-          echo "$SUMMARY_STRING"
+          echo "$GITHUB_OUTPUT"
+          cat "$SARIF_PATH" | jq -r 
 
       - if: |-
           ${{ !cancelled() && steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path != '' }}
