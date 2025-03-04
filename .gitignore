@@ -1,3 +1,6 @@
 .terraform.lock.hcl
 .terraform/
+mainplan.json
+mainplan.tfplan
+IaCScanReport.json
 posture_example.yaml
