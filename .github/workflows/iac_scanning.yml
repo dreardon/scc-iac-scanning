@@ -3,8 +3,7 @@ name: IaC Code Scanning w/ Security Command Center (SCC)
 on:
  push:
     branches:
-      - 'main'
-      - 'release/**/*'
+      - '*'
 
 env:
   WORKLOAD_IDENTITY_POOL: ${{ vars.WORKLOAD_IDENTITY_POOL }}
