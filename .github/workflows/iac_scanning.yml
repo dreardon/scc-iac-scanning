@@ -11,6 +11,7 @@ env:
   WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER: ${{ vars.WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}
   WORKLOAD_IDENTITY_PROJECT_ID: ${{ vars.WORKLOAD_IDENTITY_PROJECT_ID }}
   TF_VAR_BQ_OWNER: ${{ vars.TF_VAR_BQ_OWNER }}
+  TF_VAR_ORGANIZATION_ID: ${{ vars.TF_VAR_ORGANIZATION_ID }}
   TF_VAR_PROJECT_ID: ${{ vars.TF_VAR_PROJECT_ID }}
   TF_VAR_REGION: ${{ vars.TF_VAR_REGION }}
   TF_VAR_ZONE: ${{ vars.TF_VAR_ZONE }}
@@ -65,11 +66,10 @@ jobs:
       - name: Summarize Counts and Output Results
         id: summarize-vulnerabilities
         run: |
-          echo 'The result of the terraform code scan was ${{ steps.analyze-code-security-scc.outputs.iac_scan_result }}'
+          echo 'The result of the terraform code scan was "${{ steps.analyze-code-security-scc.outputs.iac_scan_result }}"'
           SARIF_PATH="${{ steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path }}"
           if [[ -z "$SARIF_PATH" || ! -f "$SARIF_PATH" ]]; then
             echo "No SARIF file found or path is empty. Skipping vulnerability summary."
-            echo "vulnerability_summary=No SARIF file found" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -80,7 +80,6 @@ jobs:
 
           if [[ -z "$SUMMARY" ]]; then
             echo "No vulnerabilities found"
-            echo "vulnerability_summary=No vulnerabilities found" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -91,10 +90,7 @@ jobs:
 
           # Format the output string
           SUMMARY_STRING="HIGH: $HIGH, MEDIUM: $MEDIUM, LOW: $LOW"
-
-          # Output the summary to GITHUB_OUTPUT
-          echo "vulnerability_summary=$SUMMARY_STRING" >> $GITHUB_OUTPUT
-          echo "$GITHUB_OUTPUT"
+          echo $SUMMARY_STRING
           cat "$SARIF_PATH" | jq -r 
 
       - if: |-
