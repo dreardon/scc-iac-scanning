@@ -3,12 +3,13 @@ substitutions:
   _TF_VAR_PROJECT_ID: ${_TF_VAR_PROJECT_ID}
   _TF_VAR_REGION: ${_TF_VAR_REGION}
   _TF_VAR_ZONE: ${_TF_VAR_ZONE}
-  _ORGANIZATION_ID: ${_ORGANIZATION_ID}
+  _TF_VAR_ORGANIZATION_ID: ${_TF_VAR_ORGANIZATION_ID}
 
 options:
   logging: CLOUD_LOGGING_ONLY
   env:
     - TF_VAR_BQ_OWNER=${_TF_VAR_BQ_OWNER}
+    - TF_VAR_ORGANIZATION_ID=${_TF_VAR_ORGANIZATION_ID}
     - TF_VAR_PROJECT_ID=${_TF_VAR_PROJECT_ID}
     - TF_VAR_REGION=${_TF_VAR_REGION}
     - TF_VAR_ZONE=${_TF_VAR_ZONE}
@@ -52,7 +53,7 @@ steps:
       - '-c'
       - |
         gcloud scc iac-validation-reports create \
-        organizations/$_ORGANIZATION_ID/locations/global --tf-plan-file=mainplan.json \
+        organizations/$_TF_VAR_ORGANIZATION_ID/locations/global --tf-plan-file=mainplan.json \
         --format="json(response.iacValidationReport)" > IaCScanReport_$BUILD_ID.json
     dir: .
     id: Run IaC scan

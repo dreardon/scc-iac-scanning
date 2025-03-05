@@ -25,7 +25,7 @@ The following are the prerequisites followed when building this repository:
         - principal://iam.googleapis.com/projects/[PROJECT_ID]/locations/global/workloadIdentityPools/[WORKLOAD_POOL_ID]/subject/repo:dreardon/scc-iac-scanning:ref:refs/heads/main
         - Google Cloud IAM Role, "Security Posture Shift-Left Validator" 
 ## Local Usage
-Code checked into this repository will run a Github Action evaluation; however, this can be run locally if the *securityposture.googleapis.com* and Security Command Center Premium or Enterprise is enabled as documented [here](https://cloud.google.com/security-command-center/docs/validate-iac#gcloud-create-iac). The following code is also available in `iac-eval.sh`
+Code checked into this repository will run a Github Actions IaC evaluation; however, this can be run locally if *securityposture.googleapis.com* and Security Command Center Premium or Enterprise is enabled as documented [here](https://cloud.google.com/security-command-center/docs/validate-iac#gcloud-create-iac). The following code is also available in `iac-eval.sh`
 
 ```shell
 #!/bin/bash
