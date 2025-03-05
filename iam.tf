@@ -19,10 +19,11 @@ resource "google_project_iam_member" "service_account_owner" {
 }
 
 #USER_MANAGED_SERVICE_ACCOUNT_KEY
-resource "google_service_account_key" "scc-iac-service_account-key" {
-  service_account_id = google_service_account.scc-iac-service_account.name
-  public_key_type    = "TYPE_X509_PEM_FILE"
-}
+#TODO Triage Error //iam.googleapis.com/projects/placeholder-*
+# resource "google_service_account_key" "scc-iac-service_account-key" {
+#   service_account_id = google_service_account.scc-iac-service_account.name
+#   public_key_type    = "TYPE_X509_PEM_FILE"
+# }
 
 #REDIS_ROLE_USED_ON_ORG
 resource "google_organization_iam_member" "service_account_redis" {
