@@ -18,6 +18,7 @@ settings {
     # Disable public IP (recommended for security)
     ip_configuration {
       ipv4_enabled = true
+      ssl_mode = "ALLOW_UNENCRYPTED_AND_ENCRYPTED"
     }
 
     # Enable logging (adjust flags as needed)
@@ -145,11 +146,11 @@ resource "google_sql_database" "postgres_db" {
 }
 
 # Example of creating a user
-resource "google_sql_user" "postgres_user" {
-  name     = "myuser"
-  instance = google_sql_database_instance.main.name
-  password = "mypassword" # IMPORTANT: In production, use a secret management solution!
-}
+#resource "google_sql_user" "postgres_user" {
+#  name     = "myuser"
+#  instance = google_sql_database_instance.main.name
+#  password = "mypassword" # IMPORTANT: In production, use a secret management solution!
+# }
 
 #Example CMEK for Cloud SQL
 
