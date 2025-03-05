@@ -15,6 +15,7 @@ env:
   TF_VAR_PROJECT_ID: ${{ vars.TF_VAR_PROJECT_ID }}
   TF_VAR_REGION: ${{ vars.TF_VAR_REGION }}
   TF_VAR_ZONE: ${{ vars.TF_VAR_ZONE }}
+  TF_VAR_BACKEND_BUCKET: ${{ vars.TF_VAR_BACKEND_BUCKET }}
 
 permissions:
   id-token: write 
@@ -23,6 +24,9 @@ permissions:
 jobs:
   iac_scan_report:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -37,6 +41,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Stage Terraform Resources
+        id: stage
+        working-directory: ./staging
+        run: |
+          terraform init -backend-config="bucket=$TF_VAR_BACKEND_BUCKET"
+          terraform plan       
+      
       - name: Terraform Init
         id: init
         run: terraform init
