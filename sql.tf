@@ -14,17 +14,10 @@ settings {
       binary_log_enabled = true
     }
 
-    # Enable point-in-time recovery
-    point_in_time_recovery_enabled = true
-
-    # Enable SSL enforcement
-    ip_configuration {
-      require_ssl = true
-    }
 
     # Disable public IP (recommended for security)
     ip_configuration {
-      ipv4_enabled = false
+      ipv4_enabled = true
     }
 
     # Enable logging (adjust flags as needed)
@@ -148,38 +141,38 @@ settings {
 # Example of creating a database within the instance
 resource "google_sql_database" "postgres_db" {
   name     = "mydatabase"
-  instance = google_sql_database_instance.postgres_instance.name
+  instance = google_sql_database_instance.main.name
 }
 
 # Example of creating a user
 resource "google_sql_user" "postgres_user" {
   name     = "myuser"
-  instance = google_sql_database_instance.postgres_instance.name
+  instance = google_sql_database_instance.main.name
   password = "mypassword" # IMPORTANT: In production, use a secret management solution!
 }
 
 #Example CMEK for Cloud SQL
 
-resource "google_kms_crypto_key" "cloudsql_key" {
-  name                = "cloudsql-key"
-  key_ring            = google_kms_key_ring.keyring.id # Assuming you have key ring already created
-  rotation_period     = "2592000s"
-}
+# resource "google_kms_crypto_key" "cloudsql_key" {
+#   name                = "cloudsql-key"
+#   key_ring            = google_kms_key_ring.keyring.id # Assuming you have key ring already created
+#   rotation_period     = "2592000s"
+# }
 
-resource "google_kms_key_ring" "keyring" {
-  name     = "cloudsql-keyring"
-  location = "us-central1"
-}
+# resource "google_kms_key_ring" "keyring" {
+#   name     = "cloudsql-keyring"
+#   location = "us-central1"
+# }
 
-resource "google_sql_database_instance" "postgres_instance_cmek" {
-  name             = "postgres-instance-cmek"
-  region           = "us-central1" # Replace with your desired region
-  database_version = "POSTGRES_15"
+# resource "google_sql_database_instance" "postgres_instance_cmek" {
+#   name             = "postgres-instance-cmek"
+#   region           = "us-central1" # Replace with your desired region
+#   database_version = "POSTGRES_15"
 
-  settings {
-    tier = "db-f1-micro" # Replace with your desired tier
-        disk_encryption_configuration {
-          kms_key_name = google_kms_crypto_key.cloudsql_key.id
-        }
-  }
-}
+#   settings {
+#     tier = "db-f1-micro" # Replace with your desired tier
+#         disk_encryption_configuration {
+#           kms_key_name = google_kms_crypto_key.cloudsql_key.id
+#         }
+#   }
+# }
