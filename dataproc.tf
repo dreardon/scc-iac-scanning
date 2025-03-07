@@ -8,7 +8,7 @@ resource "google_project_service" "rm-api" {
 }
 
 resource "google_dataproc_cluster" "iaccluster" {
-  depends_on                    = [google_project_service.dataproc-api, google_project_service.rm-api, google_compute_firewall.allow-internal]
+  depends_on                    = [google_project_service.dataproc-api, google_project_service.rm-api]
   name                          = "iaccluster"
   region                        = var.REGION
   graceful_decommission_timeout = "360s"
