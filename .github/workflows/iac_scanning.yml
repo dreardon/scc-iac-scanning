@@ -105,7 +105,7 @@ jobs:
           # Format the output string
           SUMMARY_STRING="HIGH: $HIGH, MEDIUM: $MEDIUM, LOW: $LOW"
           echo $SUMMARY_STRING
-          echo $SHA_SUMMARY
+          echo $SHA_SUMMARY| tr ' ' '\n'
           cat "$SARIF_PATH" | jq -r 
 
       - if: |-
