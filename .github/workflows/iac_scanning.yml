@@ -89,6 +89,9 @@ jobs:
             .runs[0].tool.driver.rules | group_by(.properties.severity) | map({(.[] | .properties.severity):length}) | add
           ')
 
+          # jq command to parse SHA modules
+          SHA_SUMMARY=$(cat "$SARIF_PATH" | jq -r '.runs[0].tool.driver.rules[] | select(.properties.policyType == "SECURITY_HEALTH_ANALYTICS_MODULE")| (.id // "")  | split("/")[-1]' "$json_file" | sort)
+
           if [[ -z "$SUMMARY" ]]; then
             echo "No vulnerabilities found"
             exit 0
@@ -102,6 +105,7 @@ jobs:
           # Format the output string
           SUMMARY_STRING="HIGH: $HIGH, MEDIUM: $MEDIUM, LOW: $LOW"
           echo $SUMMARY_STRING
+          echo $SHA_SUMMARY
           cat "$SARIF_PATH" | jq -r 
 
       - if: |-
