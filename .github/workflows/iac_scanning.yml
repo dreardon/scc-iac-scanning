@@ -90,7 +90,7 @@ jobs:
           ')
 
           # jq command to parse SHA modules
-          SHA_SUMMARY=$(cat "$SARIF_PATH" | jq -r '.runs[0].tool.driver.rules[] | select(.properties.policyType == "SECURITY_HEALTH_ANALYTICS_MODULE")| (.id // "")  | split("/")[-1]' "$json_file" | sort)
+          SHA_SUMMARY=$(cat "$SARIF_PATH" | jq -r '.runs[0].tool.driver.rules[] | select(.properties.policyType == "SECURITY_HEALTH_ANALYTICS_MODULE")| (.id // "") | split("/")[-1]' | sort)
 
           if [[ -z "$SUMMARY" ]]; then
             echo "No vulnerabilities found"
