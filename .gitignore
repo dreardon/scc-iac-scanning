@@ -4,6 +4,7 @@ terraform.tfstate.backup
 .terraform/
 terraform.tfvars
 staging/terraform.tfvars
+validation/venvs/
 mainplan.json
 mainplan.tfplan
 IaCScanReport.json
