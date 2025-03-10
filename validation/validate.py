@@ -3,7 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import ast
 
-found_detectors = sys.argv[1].split(' ')
+found_detectors = sys.argv[1].replace('\n',' ').split(' ')
 print('Found detectors:',found_detectors)
 
 url = "https://cloud.google.com/security-command-center/docs/supported-iac-assets-policies#security-health-analytics-built-in-detectors"

@@ -119,7 +119,7 @@ jobs:
           # Format the output string
           SUMMARY_STRING="HIGH: $HIGH, MEDIUM: $MEDIUM, LOW: $LOW"
           echo $SUMMARY_STRING
-          /home/runner/work/scc-iac-scanning/scc-iac-scanning/validation/venv/bin/python validation/validate.py $SHA_SUMMARY
+          /home/runner/work/scc-iac-scanning/scc-iac-scanning/validation/venv/bin/python validation/validate.py "${SHA_SUMMARY}"
           echo $SHA_SUMMARY| tr ' ' '\n'
           cat "$SARIF_PATH" | jq -r 
 
