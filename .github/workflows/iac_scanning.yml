@@ -22,8 +22,37 @@ permissions:
   contents: read
 
 jobs:
+
+  stage_resources:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+            project_id: ${{ vars.TF_VAR_PROJECT_ID }}
+            workload_identity_provider: 'projects/${{ vars.WORKLOAD_IDENTITY_POOL_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ vars.WORKLOAD_IDENTITY_POOL }}/providers/${{ vars.WORKLOAD_IDENTITY_PROVIDER }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Stage Terraform Resources
+        id: stage
+        working-directory: ./staging
+        run: |
+          terraform init -backend-config="bucket=$TF_VAR_BACKEND_BUCKET"
+          terraform plan
+          terraform apply -auto-approve
+          
   iac_scan_report:
     runs-on: ubuntu-latest
+    needs: stage_resources
     defaults:
       run:
         working-directory: .    
