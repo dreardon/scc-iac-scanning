@@ -11,3 +11,23 @@ resource "google_storage_bucket" "scc-iac-staged-bucket" {
   project = var.PROJECT_ID
   uniform_bucket_level_access = true
 }
+
+resource "google_kms_key_ring" "scc-iac-staged-keyring" {
+  name       = "scc-iac-staged-keyring"
+  location   = var.REGION
+}
+
+resource "google_kms_crypto_key" "scc-iac-staged-fixed-rotation-crypto-key" {
+  name            = "scc-iac-staged-fixed-rotation-crypto-key"
+  key_ring        = scc-iac-staged-keyring.keyring.id
+  rotation_period = "8640000"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+
+
+
+
