@@ -19,8 +19,8 @@ resource "google_kms_key_ring" "scc-iac-staged-keyring" {
 
 resource "google_kms_crypto_key" "scc-iac-staged-fixed-rotation-crypto-key" {
   name            = "scc-iac-staged-fixed-rotation-crypto-key"
-  key_ring        = scc-iac-staged-keyring.keyring.id
-  rotation_period = "8640000"
+  key_ring        = google_kms_key_ring.scc-iac-staged-keyring.id
+  rotation_period = "7776000s"
 
   lifecycle {
     prevent_destroy = true
