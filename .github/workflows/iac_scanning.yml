@@ -31,20 +31,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.12
-
-      - name: Run Python commands
-        working-directory: ./validation
-        run: |
-          pip install --upgrade pip
-          python3.12 -m venv venv
-          source venv/bin/activate
-          pip install -r ./requirements.txt
-          echo "VIRTUAL ENV:" $VIRTUAL_ENV
-
       - name: Authenticate with Google Cloud
         id: auth
         uses: google-github-actions/auth@v2
@@ -60,7 +46,7 @@ jobs:
         working-directory: ./staging
         run: |
           terraform init -backend-config="bucket=$TF_VAR_BACKEND_BUCKET"
-          terraform plan       
+          terraform plan
       
       - name: Terraform Init
         id: init
@@ -88,11 +74,47 @@ jobs:
           failure_criteria: 'High:1,Medium:1,Low:1,Operator:or'
           fail_silently: false
 
+      - if: |-
+          ${{ !cancelled() && steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path != '' }}
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: 'sarif'
+          path: '${{ steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path }}'
+  
+  summarize_findings:
+    runs-on: ubuntu-latest
+    needs: iac_scan_report
+    defaults:
+      run:
+        working-directory: .    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12
+
+      - name: Run Python commands
+        working-directory: ./validation
+        run: |
+          pip install --upgrade pip
+          python3.12 -m venv venv
+          source venv/bin/activate
+          pip install -r ./requirements.txt
+          echo "VIRTUAL ENV:" $VIRTUAL_ENV
+
+      - name: Download Sarif Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 'sarif'
+          path: '/tmp/sarif'
+
       - name: Summarize Counts and Output Results
         id: summarize-vulnerabilities
         run: |
-          echo 'The result of the terraform code scan was "${{ steps.analyze-code-security-scc.outputs.iac_scan_result }}"'
-          SARIF_PATH="${{ steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path }}"
+          SARIF_PATH="/tmp/sarif/iac-scan-sarif.json"
           if [[ -z "$SARIF_PATH" || ! -f "$SARIF_PATH" ]]; then
             echo "No SARIF file found or path is empty. Skipping vulnerability summary."
             exit 0
@@ -122,10 +144,3 @@ jobs:
           /home/runner/work/scc-iac-scanning/scc-iac-scanning/validation/venv/bin/python validation/validate.py "${SHA_SUMMARY}"
           echo $SHA_SUMMARY| tr ' ' '\n'
           cat "$SARIF_PATH" | jq -r 
-
-      - if: |-
-          ${{ !cancelled() && steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path != '' }}
-        uses: 'actions/upload-artifact@v4'
-        with:
-          name: 'sarif'
-          path: '${{ steps.analyze-code-security-scc.outputs.iac_scan_result_sarif_path }}'
