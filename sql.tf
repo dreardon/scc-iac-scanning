@@ -4,14 +4,15 @@ resource "google_sql_database_instance" "main" {
   database_version    = "POSTGRES_15"
   region              = var.REGION
   deletion_protection = false
+  root_password       = "" # blank root password 
 
   settings {
     tier = "db-f1-micro" # Replace with your desired tier
 
     # Enable automatic backups
     backup_configuration {
-      enabled            = true
-      binary_log_enabled = true
+      enabled = false
+      # binary_log_enabled = true
     }
 
     # Enable point-in-time recovery
@@ -34,10 +35,10 @@ resource "google_sql_database_instance" "main" {
       value = "off"
     }
     # check 
-    database_flags {
-      name  = "enable_external_scripts"
-      value = "off"
-    }
+    # database_flags {
+    #   name  = "enable_external_scripts"
+    #   value = "on"
+    # }
 
     database_flags {
       name  = "log_connections"
