@@ -13,7 +13,7 @@ resource "google_storage_bucket" "scc-iac-staged-bucket" {
 }
 
 resource "google_kms_key_ring" "scc-iac-staged-keyring" {
-  name       = "scc-iac-staged-keyring"
+  name       = "scc-iac-staged-keyring-example"
   location   = var.REGION
 }
 
