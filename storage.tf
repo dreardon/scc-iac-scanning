@@ -15,3 +15,12 @@ resource "google_storage_bucket" "scc-iac-example_bucket" {
 #     "allUsers",
 #   ]
 # }
+
+# Create bucket
+resource "google_storage_bucket" "sample" {
+  name          = "example-bucket"
+  location      = "US"
+  force_destroy = true
+
+  uniform_bucket_level_access = false
+}
